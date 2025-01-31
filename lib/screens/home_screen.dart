@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'package:lab4/screens/calendar_screen.dart';
+import 'package:lab4/services/location_reminder_notification.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? _userLocation;
   bool _isLoadingRoute = false;
   LatLng? _selectedLocation;
+  late LocationReminderService _locationService;
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _selectedDay = DateTime.now();
     _mapController = MapController();
     _eventsBox = Hive.box<ExamEvent>('events');
+    _locationService = LocationReminderService();
+    _locationService.initialize();
     _getCurrentLocation();
     _loadMarkers();
   }
@@ -184,6 +188,20 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Exam Schedule'),
         actions: [
           IconButton(
+            icon: Icon(Icons.notifications_active),
+            onPressed: () async {
+              print("Testing notifications...");
+              await _locationService.checkLocationNow();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text('Location check triggered - check debug console'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.calendar_today),
             onPressed: () {
               Navigator.push(
@@ -199,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           FlutterMap(
-            mapController: _mapController, // Attach MapController
+            mapController: _mapController,
             options: MapOptions(
               center: LatLng(41.9981, 21.4254),
               zoom: 13.0,
@@ -247,6 +265,12 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 16,
             child: Column(
               children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    LocationReminderService().checkLocationNow();
+                  },
+                  child: Icon(Icons.notifications),
+                ),
                 FloatingActionButton(
                   heroTag: "zoom_in",
                   child: Icon(Icons.add),

@@ -26,7 +26,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     _loadEvents();
   }
 
-  /// Group events by date
   void _loadEvents() {
     final groupedEvents = <DateTime, List<ExamEvent>>{};
     for (var event in widget.eventsBox.values) {
@@ -43,7 +42,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     });
   }
 
-  /// Add or edit an event
   void _addOrEditEvent({ExamEvent? eventToEdit}) {
     final TextEditingController titleController = TextEditingController(
       text: eventToEdit?.title ?? '',

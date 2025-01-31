@@ -1,5 +1,9 @@
 buildscript {
     ext.kotlin_version = '1.7.10'
+     ext {
+       
+        javaVersion = JavaVersion.VERSION_17
+    }
     repositories {
         google()
         mavenCentral()

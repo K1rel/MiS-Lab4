@@ -18,6 +18,8 @@ class ExamEvent extends HiveObject {
 
   @HiveField(4)
   double longitude;
+  @HiveField(5)
+  bool hasLocationAlertShown = false;
 
   ExamEvent({
     required this.title,
